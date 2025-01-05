@@ -2,6 +2,7 @@
 #ifndef VISUALNOVEL_APPLICATION_H
 #define VISUALNOVEL_APPLICATION_H
 #include "Initialization.h"
+#include <SDL3/SDL.h>
 #include <Core/Window/Window.h>
 #include <Core/CoordinateSystem/RatioCoordinateSystem.h>
 #include <Asset/ThemePack/ThemePack.h>

@@ -10,7 +10,8 @@ add_library(VisualNovelRender STATIC ${Render_SRC})
 
 set(Render_Require
   SDL3-static
-  SDL_image
+  SDL3_image::SDL3_image
+  imgui
   VisualNovelCore
   VisualNovelAsset
 )

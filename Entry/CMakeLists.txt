@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-add_executable (VisualNovel   "Application.cc")
+add_executable (VisualNovel "Application.cc")
 
 set (VisualNovelRequire
   SDL3_ttf::SDL3_ttf
