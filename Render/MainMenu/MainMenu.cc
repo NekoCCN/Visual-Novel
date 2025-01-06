@@ -70,18 +70,18 @@ void vn::render::MainMenu::render()
     }
 }
 
-void vn::render::MainMenu::response(SDL_Event* event, bool& will_quit) const
+void vn::render::MainMenu::response(SDL_Event* event, bool& will_quit, uint32_t& button_click) const
 {
     if (response_status_ == false)
     {
         return;
     }
-
     for (uint32_t i = 1; i < texture_buf_.size(); ++i)
     {
         if (universalMouseEventListen(event, MouseEvent::MOUSE_BUTTON_UP, frect_buf_[i]))
         {
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Mouse button up : %d", i);
+            button_click = i;
             if (i == 4)
             {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Normal close program", i);

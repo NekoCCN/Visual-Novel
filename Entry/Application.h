@@ -9,6 +9,7 @@
 #include <Asset/ThemePack/ThemePack.h>
 #include <Asset/ThemePackCreator/ThemePackCreator.h>
 #include <Render/MainMenu/MainMenu.h>
+#include <Render/FileWeiget/ChooseFile.h>
 #include <memory>
 #include <string>
 
@@ -43,6 +44,7 @@ namespace vn
 			std::shared_ptr<render::MainMenu> main_menu_;
 
 			// GUI part
+			std::shared_ptr<render::ChooseFile> choose_file_;
 
 			// Render All Function
 			void renderAll()
@@ -65,7 +67,8 @@ namespace vn
 				theme_pack_ = std::make_shared<asset::theme::ThemePack>(theme_pack_path);
 
 				// GuiContext
-				gui_context_ = std::make_shared<core::GuiContext>(window_, (*theme_pack_)[0], theme_pack_->getFileSize(0));
+				gui_context_ = std::make_shared<core::GuiContext>(window_, (*theme_pack_)[0], theme_pack_->getFileSize(0),
+					std::min(height, width) * 0.03);  // The min{height, width}*0.03 function to font pixel size seem work well
 
 				// RatioCoordinateSystem
                 ratio_coordinate_system_ = std::make_shared<core::coordinatesystem::StandardRatioCoordinateSystem<uint32_t>>(window_width_, window_height_);
@@ -74,6 +77,7 @@ namespace vn
 				main_menu_ = std::make_shared<render::MainMenu>(theme_pack_, window_, ratio_coordinate_system_);
 
 				// GUI part
+				choose_file_ = std::make_shared<render::ChooseFile>();
 
 			}
 			bool operator()()
@@ -82,6 +86,7 @@ namespace vn
 				bool quit = false;
 				window_->setRenderVSync(1);
 
+				uint32_t click = 0;
 				main_menu_->startRender();
 				main_menu_->startResponse();
 
@@ -96,7 +101,13 @@ namespace vn
 							quit = true;
 						}
 
-						main_menu_->response(&e, quit);
+						main_menu_->response(&e, quit, click);
+						
+						if (click == 1)
+						{
+							choose_file_->startRender();
+							click = 0;
+						}
 					}
 
 					window_->setRenderDrawColorInt(255, 255, 255, 255);
@@ -109,6 +120,7 @@ namespace vn
 					ImGui::NewFrame();
 
 					guiRenderAll();
+					choose_file_->renderAndResponse();
 
 					ImGui::Render();
 
@@ -117,6 +129,8 @@ namespace vn
 				}
 				return true;
 			}
+
+			~Application() = default;
 		};
 	}
 }

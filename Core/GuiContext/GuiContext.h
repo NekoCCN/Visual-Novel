@@ -20,7 +20,7 @@ namespace vn
 			ImGuiIO* io;
 			std::shared_ptr<char> font_data;
 		public:
-			GuiContext(const std::shared_ptr<core::Window>& window, const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 15.0f)
+			GuiContext(const std::shared_ptr<core::Window>& window, const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 30.0f)
 			{
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Creating GUI Context");
 				IMGUI_CHECKVERSION();
@@ -41,7 +41,7 @@ namespace vn
 					char* font_copy = new char[font_size];
 					memcpy(font_copy, font_data.get(), font_size);
 					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Load Font");
-					io->Fonts->AddFontFromMemoryTTF(font_copy, font_size, 20.0f);
+					io->Fonts->AddFontFromMemoryTTF(font_copy, font_size, size_pixels);
 				}
 			}
 			ImGuiIO& getIOContext()

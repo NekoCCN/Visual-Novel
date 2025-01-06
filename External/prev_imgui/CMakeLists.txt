@@ -18,6 +18,7 @@ set (IMGUISRC
   imgui/backends/imgui_impl_opengl3.cpp
   imgui/backends/imgui_impl_sdlrenderer3.h
   imgui/backends/imgui_impl_sdlrenderer3.cpp
+  imgui/misc/cpp/imgui_stdlib.cpp
 )
 add_library(imgui STATIC ${IMGUISRC})
 

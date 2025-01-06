@@ -3,10 +3,11 @@ set(Render_SRC
   "MainMenu/MainMenu.h"
   "MainMenu/MainMenu.cc" 
   "BasicRender/BasicRender.h"
-)
+  "FileWeiget/ImGuiFileDialog/ImGuiFileDialog.cpp"
+  "FileWeiget/ChooseFile.h"
+  "FileWeiget/ChooseFolder.h")
 
 add_library(VisualNovelRender STATIC ${Render_SRC})
-
 
 set(Render_Require
   SDL3-static
