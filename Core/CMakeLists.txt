@@ -14,13 +14,14 @@ set(Core_SRC
   "LogSystem/LogFunction.h"
   "LogSystem/LogFunction.cc"
   "CoordinateSystem/RatioCoordinateSystem.h"
-)
+ "GuiContext/GuiContext.h")
 
 add_library(VisualNovelCore STATIC ${Core_SRC})
 
 
 set(Core_Require
   SDL3-static
+  imgui
 )
 
 target_link_libraries(VisualNovelCore PUBLIC ${Core_Require})

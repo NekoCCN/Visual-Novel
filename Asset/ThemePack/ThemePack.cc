@@ -39,7 +39,7 @@ vn::asset::theme::ThemePack::ThemePack(const std::string& path)
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Initialize theme file : %s", path.c_str());
     for (uint64_t i = 0; i < toc_size_ - 1; ++i)
     {
-        std::shared_ptr<char> buffer(new char[getFileSize(i)]);
+        std::shared_ptr<char> buffer(new char[getFileSize(i)], std::default_delete<char[]>());
         if (SDL_ReadIO(rstream_, buffer.get(), getFileSize(i)) != getFileSize(i))
         {
             throw core::exception::invalid_file_format();

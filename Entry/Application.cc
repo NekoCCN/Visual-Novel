@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "Application.h"
 
 int main()
@@ -11,4 +12,8 @@ int main()
 
 	vn::entry::Application app("Test", 1920, 1080, R"(E:\TestFile\basic_theme.vntp)");
 	app();
+
+	// vn::asset::theme::ThemePack theme_pack(R"(E:\TestFile\basic_theme.vntp)");
+	// ofstream file("E:\\basic_font.ttf", ios::out | ios::binary);
+	// file.write(theme_pack[0].get(), theme_pack.getFileSize(0));
 }
