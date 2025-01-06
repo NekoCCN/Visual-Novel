@@ -1,6 +1,7 @@
 #pragma once
 #ifndef VISUALNOVEL_INITIALIZATION_H
 #define VISUALNOVEL_INITIALIZATION_H
+#include <imgui.h>
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <Core/Exception/Exception.h>
@@ -11,9 +12,6 @@ namespace vn
 {
 	namespace entry
 	{
-		/*
-        * Due to changes in the SDL_Image library, Webp format images will no longer be supported.
-		*/
 		class ProjectInitializer
 		{
 		private:

@@ -39,7 +39,7 @@ bool vn::asset::theme::ThemePackCreatorInterface::operator()()
 	}
 
 	SDL_SeekIO(wstream_, sizeof(uint64_t) + label_.size() + 1, SDL_IO_SEEK_SET);
-	SDL_WriteIO(wstream_, toc_.data(), (toc_size_ + 1) * sizeof(uint64_t));
+	SDL_WriteIO(wstream_, toc_.data(), toc_size_ * sizeof(uint64_t));
 
 	return true;
 }
