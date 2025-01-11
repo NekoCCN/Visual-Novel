@@ -10,6 +10,7 @@
 #include <Asset/ThemePackCreator/ThemePackCreator.h>
 #include <Render/MainMenu/MainMenu.h>
 #include <Render/FileWeiget/ChooseFile.h>
+#include <Render/FileWeiget/ChooseVnap.h>
 #include <memory>
 #include <string>
 
@@ -45,7 +46,30 @@ namespace vn
 
 			// GUI part
 			std::shared_ptr<render::ChooseFile> choose_file_;
+			std::shared_ptr<render::ChooseVnap> choose_vnap_;
 
+			// Response Part Function
+			void Response_main_menu(SDL_Event* event, int32_t& status)
+			{
+				uint32_t click = 0;
+				main_menu_->changeResponse(!(choose_file_->getRenderStatus() || choose_vnap_->getRenderStatus()));
+				main_menu_->response(event, status, click);
+
+				switch (click)
+				{
+				case 1:
+					choose_file_->startRender();
+					click = 0;
+					break;
+				case 2:
+					choose_vnap_->startRender();
+					click = 0;
+					break;
+				default:
+					break;
+				}
+			}
+			
 			// Render All Function
 			void renderAll()
 			{
@@ -53,7 +77,8 @@ namespace vn
 			}
 			void guiRenderAll()
 			{
-				ImGui::ShowDemoWindow();
+				choose_file_->renderAndResponse();
+				choose_vnap_->renderAndResponse();
 			}
 		public:
 			Application(const std::string& title = "NULL", uint32_t width = 1920, uint32_t height = 1080,
@@ -78,19 +103,19 @@ namespace vn
 
 				// GUI part
 				choose_file_ = std::make_shared<render::ChooseFile>();
-
+				choose_vnap_ = std::make_shared<render::ChooseVnap>();
 			}
-			bool operator()()
+			int32_t operator()()
 			{
 				SDL_Event e;
-				bool quit = false;
+				int32_t status = 1;
+
 				window_->setRenderVSync(1);
 
-				uint32_t click = 0;
 				main_menu_->startRender();
 				main_menu_->startResponse();
 
-				while (quit == false)
+				while (status > 0)
 				{
 					while (SDL_PollEvent(&e))
 					{
@@ -98,16 +123,10 @@ namespace vn
 
 						if (e.type == SDL_EVENT_QUIT)
 						{
-							quit = true;
+							status = 0;
 						}
 
-						main_menu_->response(&e, quit, click);
-						
-						if (click == 1)
-						{
-							choose_file_->startRender();
-							click = 0;
-						}
+						Response_main_menu(&e, status);
 					}
 
 					window_->setRenderDrawColorInt(255, 255, 255, 255);
@@ -120,14 +139,13 @@ namespace vn
 					ImGui::NewFrame();
 
 					guiRenderAll();
-					choose_file_->renderAndResponse();
 
 					ImGui::Render();
 
 					ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), window_->getRendererHinding());
 					window_->presentRender();
 				}
-				return true;
+				return status;
 			}
 
 			~Application() = default;

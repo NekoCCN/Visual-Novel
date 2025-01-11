@@ -33,7 +33,7 @@ namespace vn
 			void whenChangedWindowSize(const std::shared_ptr<core::coordinatesystem::RatioCoordinateSystem<uint32_t>>& rcs) override;
 			void setThemePack(const std::shared_ptr<asset::theme::ThemePack>& theme_pack_pointer) override;
 			void render() override;
-			void response(SDL_Event* event, bool& will_quit, uint32_t& button_click) const;
+			void response(SDL_Event* event, int32_t& status, uint32_t& button_click) const;
 
 			~MainMenu() override;
 		};

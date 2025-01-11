@@ -11,7 +11,7 @@ namespace vn
 {
 	namespace render
 	{
-		class ChooseFile
+		class ChooseVnap
 		{
 		private:
 			bool render_status_ = false;
@@ -21,6 +21,10 @@ namespace vn
 			{
 				render_status_ = true;
 			}
+			bool getRenderStatus() const
+			{
+				return render_status_;
+			}
 			void renderAndResponse()
 			{
 				if (render_status_ == false)
@@ -28,12 +32,15 @@ namespace vn
 					return;
 				}
 
-				ImGui::Begin("Choose a Folder", &render_status_, ImGuiWindowFlags_NoCollapse);
+				ImGuiIO& io = ImGui::GetIO();
+				ImGui::SetNextWindowSize(ImVec2(0.0f, io.DisplaySize.y * 0.2));
+				ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+				ImGui::Begin("Choose a vnap(.vnap) File", &render_status_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking);
 				if (ImGui::Button("Browse"))
 				{
 					IGFD::FileDialogConfig config;
 					config.path = ".";
-					ImGuiFileDialog::Instance()->OpenDialog("MainChooseFile1", "Choose File", nullptr, config);
+					ImGuiFileDialog::Instance()->OpenDialog("MainChooseFile1", "Choose File", ".vnap", config);
 				}
 				ImGui::InputText("File Path", &file_path_);
 				if (ImGui::Button("OK"))

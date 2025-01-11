@@ -32,6 +32,14 @@ namespace vn
 					width_ = tmp.w;
                     height_ = tmp.h;
 				}
+				Tn getW()
+				{
+					return width_;
+				}
+				Tn getH()
+				{
+					return height_;
+				}
 				void reset(Tn width, Tn height)
 				{
 					width_ = width;

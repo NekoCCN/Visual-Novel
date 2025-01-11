@@ -70,7 +70,7 @@ void vn::render::MainMenu::render()
     }
 }
 
-void vn::render::MainMenu::response(SDL_Event* event, bool& will_quit, uint32_t& button_click) const
+void vn::render::MainMenu::response(SDL_Event* event, int32_t& status, uint32_t& button_click) const
 {
     if (response_status_ == false)
     {
@@ -85,7 +85,7 @@ void vn::render::MainMenu::response(SDL_Event* event, bool& will_quit, uint32_t&
             if (i == 4)
             {
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Normal close program", i);
-                will_quit = true;
+                status = 0;
             }
             break;
         }
