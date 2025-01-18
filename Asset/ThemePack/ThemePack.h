@@ -1,4 +1,5 @@
 #pragma once
+#pragma execution_character_set("utf-8")
 #ifndef VISUALNOVEL_ASSET_THEMEPACK_H
 #define VISUALNOVEL_ASSET_THEMEPACK_H
 #include <SDL3/SDL.h>

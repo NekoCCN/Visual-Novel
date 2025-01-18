@@ -13,6 +13,7 @@ add_subdirectory ("Core")
 add_subdirectory ("Asset")
 add_subdirectory ("Render")
 add_subdirectory ("Entry")
+add_subdirectory ("Resolution")
 
 # SDL
 set (BUILD_SHARED_LIBS false)

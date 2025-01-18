@@ -1,4 +1,5 @@
 #include "MainMenu.h"
+#pragma execution_character_set("utf-8")
 
 void vn::render::MainMenu::loadTextureToRect(const std::shared_ptr<core::coordinatesystem::RatioCoordinateSystem<uint32_t>>& rcs)
 {

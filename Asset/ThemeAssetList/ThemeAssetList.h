@@ -1,4 +1,5 @@
 #pragma once
+#pragma execution_character_set("utf-8")
 #ifndef VISUALNOVEL_ASSET_THEMEASSETLIST_H
 #define VISUALNOVEL_ASSET_THEMEASSETLIST_H
 #include <cstdint>

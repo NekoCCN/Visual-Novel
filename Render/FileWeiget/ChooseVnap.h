@@ -64,6 +64,10 @@ namespace vn
 			{
 				return file_path_;
 			}
+			~ChooseVnap()
+			{
+                ImGuiFileDialog::Instance()->Close();
+			}
 		};
 	}
 }

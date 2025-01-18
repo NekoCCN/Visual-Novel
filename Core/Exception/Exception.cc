@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "Exception.h"
 
 void vn::core::exception::exception_hinding()

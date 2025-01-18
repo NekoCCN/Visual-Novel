@@ -1,4 +1,5 @@
 #pragma once
+#pragma execution_character_set("utf-8")
 #ifndef VISUALNOVEL_INITIALIZATION_H
 #define VISUALNOVEL_INITIALIZATION_H
 #include <imgui.h>

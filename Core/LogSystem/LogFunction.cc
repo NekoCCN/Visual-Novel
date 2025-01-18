@@ -1,3 +1,4 @@
+#pragma execution_character_set("utf-8")
 #include "LogFunction.h"
 
 void vn::core::log::initLogSys()

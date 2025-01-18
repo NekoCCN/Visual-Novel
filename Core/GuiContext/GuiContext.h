@@ -1,3 +1,7 @@
+#pragma once
+#pragma execution_character_set("utf-8")
+#ifndef VISUALNOVEL_GUICONTEXT_H
+#define VISUALNOVEL_GUICONTEXT_H
 #include <SDL3/SDL.h>
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
@@ -57,3 +61,4 @@ namespace vn
 		};
 	}
 }
+#endif // VISUALNOVEL_GUICONTEXT_H

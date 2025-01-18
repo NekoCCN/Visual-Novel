@@ -1,4 +1,5 @@
 #pragma once
+#pragma execution_character_set("utf-8")
 #ifndef VISUALNOVEL_APPLICATION_H
 #define VISUALNOVEL_APPLICATION_H
 #include "Initialization.h"

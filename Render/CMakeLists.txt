@@ -20,5 +20,5 @@ set(Render_Require
 target_link_libraries(VisualNovelRender PUBLIC ${Render_Require})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET VisualNovelCore PROPERTY CXX_STANDARD 20)
+  set_property(TARGET VisualNovelRender PROPERTY CXX_STANDARD 20)
 endif()

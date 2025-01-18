@@ -67,14 +67,14 @@ namespace vn
 
 				if (ImGui::Button("OK"))
 				{
-                    render_status_ = false;
+					render_status_ = false;
 				}
 
 				if (ImGuiFileDialog::Instance()->Display("MainChooseFile1"))
 				{
 					if (ImGuiFileDialog::Instance()->IsOk())
 					{
-						src_path_ = ImGuiFileDialog::Instance()->GetCurrentPath();
+						src_path_ = ImGuiFileDialog::Instance()->GetFilePathName();
 					}
 
 					ImGuiFileDialog::Instance()->Close();
@@ -94,7 +94,7 @@ namespace vn
 				{
 					if (ImGuiFileDialog::Instance()->IsOk())
 					{
-						dst_path_ = ImGuiFileDialog::Instance()->GetCurrentPath();
+						dst_path_ = ImGuiFileDialog::Instance()->GetFilePathName();
 					}
 
 					ImGuiFileDialog::Instance()->Close();
@@ -105,6 +105,10 @@ namespace vn
 			const std::string& getSrcFilePath() const
 			{
 				return src_path_;
+			}
+			~ChooseFile()
+			{
+				ImGuiFileDialog::Instance()->Close();
 			}
 		};
 	}

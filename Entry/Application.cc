@@ -1,4 +1,6 @@
+#pragma execution_character_set("utf-8")
 #include <iostream>
+#include <thread>
 #include <fstream>
 #include "Application.h"
 
@@ -6,7 +8,9 @@ int32_t entry(const std::string& title = "NULL", uint32_t width = 1920, uint32_t
 	const std::string& theme_pack_path = "basic_asset.vntp")
 {
 	vn::entry::Application app("Test", width, height, R"(E:\TestFile\basic_theme.vntp)");
-	return app();
+	app();
+
+	return 0;
 }
 int main()
 {
@@ -18,6 +22,7 @@ int main()
 
 
 	entry("Test", 1920, 1080, R"(E:\TestFile\basic_theme.vntp)");
+
 	entry("Test", 1920 / 3, 1080 / 3, R"(E:\TestFile\basic_theme.vntp)");
 	// vn::asset::theme::ThemePack theme_pack(R"(E:\TestFile\basic_theme.vntp)");
 	// ofstream file("E:\\basic_font.ttf", ios::out | ios::binary);
