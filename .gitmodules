@@ -14,3 +14,6 @@
 [submodule "Render/FileWeiget/ImGuiFileDialog"]
 	path = Render/FileWeiget/ImGuiFileDialog
 	url = https://github.com/aiekick/ImGuiFileDialog.git
+[submodule "External/SDL_mixer"]
+	path = External/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
