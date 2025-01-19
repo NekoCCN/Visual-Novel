@@ -8,10 +8,13 @@
 #include <Core/CoordinateSystem/RatioCoordinateSystem.h>
 #include <Core/GuiContext/GuiContext.h>
 #include <Asset/ThemePack/ThemePack.h>
+#include <Asset/AssetPackWStream/AssetPackWStream.h>
 #include <Asset/ThemePackCreator/ThemePackCreator.h>
 #include <Render/MainMenu/MainMenu.h>
 #include <Render/FileWeiget/ChooseFile.h>
 #include <Render/FileWeiget/ChooseVnap.h>
+#include <Render/LogWindow/LogWindow.h>
+#include <Resolution/DefinedPart/DefinePart.h>
 #include <memory>
 #include <string>
 
@@ -48,11 +51,16 @@ namespace vn
 			// GUI part
 			std::shared_ptr<render::ChooseFile> choose_file_;
 			std::shared_ptr<render::ChooseVnap> choose_vnap_;
+			std::shared_ptr<render::LogWindow> log_window_for_resolution;
+
+			// Resolution part
+			std::shared_ptr<resolution::DefinedPart> define_part_;
 
 			// Response Part Function
 			void Response_main_menu(SDL_Event* event, int32_t& status)
 			{
 				uint32_t click = 0;
+
 				main_menu_->changeResponse(!(choose_file_->getRenderStatus() || choose_vnap_->getRenderStatus()));
 				main_menu_->response(event, status, click);
 
@@ -66,8 +74,17 @@ namespace vn
 					choose_vnap_->startRender();
 					click = 0;
 					break;
+				case 3:
 				default:
 					break;
+				}
+
+				if (choose_file_->isSuccess())
+				{
+					SDL_IOStream* rst = SDL_IOFromFile(choose_file_->getSrcFilePath().c_str(), "r");
+					uint64_t line = 0;
+					log_window_for_resolution->startRender();
+					define_part_->resolve(rst, line, *log_window_for_resolution);
 				}
 			}
 			
@@ -80,6 +97,7 @@ namespace vn
 			{
 				choose_file_->renderAndResponse();
 				choose_vnap_->renderAndResponse();
+				log_window_for_resolution->renderAndResponse();
 			}
 		public:
 			Application(const std::string& title = "NULL", uint32_t width = 1920, uint32_t height = 1080,
@@ -105,6 +123,10 @@ namespace vn
 				// GUI part
 				choose_file_ = std::make_shared<render::ChooseFile>();
 				choose_vnap_ = std::make_shared<render::ChooseVnap>();
+				log_window_for_resolution = std::make_shared<render::LogWindow>("Resolution Log(.md)");
+
+				// Resolution part
+				define_part_ = std::make_shared<resolution::DefinedPart>();
 			}
 			int32_t operator()()
 			{

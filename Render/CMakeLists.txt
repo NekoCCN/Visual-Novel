@@ -5,7 +5,7 @@ set(Render_SRC
   "BasicRender/BasicRender.h"
   "FileWeiget/ImGuiFileDialog/ImGuiFileDialog.cpp"
   "FileWeiget/ChooseFile.h"
-  "FileWeiget/ChooseVnap.h")
+  "FileWeiget/ChooseVnap.h" "LogWindow/LogWindow.h")
 
 add_library(VisualNovelRender STATIC ${Render_SRC})
 
@@ -14,7 +14,6 @@ set(Render_Require
   SDL3_image::SDL3_image
   imgui
   VisualNovelCore
-  VisualNovelAsset
 )
 
 target_link_libraries(VisualNovelRender PUBLIC ${Render_Require})

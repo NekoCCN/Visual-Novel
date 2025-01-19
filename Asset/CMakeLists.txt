@@ -5,6 +5,8 @@ set(Asset_SRC
   "ThemeAssetList/ThemeAssetList.h"
   "ThemePackCreator/ThemePackCreator.h"
   "ThemePackCreator/ThemePackCreator.cc"
+  "AssetPackWStream/AssetPackWStream.h"
+  "AssetPackWStream/AssetPackWStream.cc"
 )
 
 add_library(VisualNovelAsset STATIC ${Asset_SRC})

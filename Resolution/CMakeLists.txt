@@ -13,6 +13,8 @@ set(Resolution_Require
   SDL3_image::SDL3_image
   imgui
   VisualNovelCore
+  VisualNovelAsset
+  VisualNovelRender
 )
 
 target_link_libraries(VisualNovelResolution PUBLIC ${Resolution_Require})

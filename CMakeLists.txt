@@ -26,6 +26,8 @@ add_subdirectory( External/SDL_image )
 include_directories( External/SDL_image/include )
 add_subdirectory( External/SDL_ttf )
 include_directories( External/SDL_ttf/include )
+add_subdirectory( External/SDL_mixer )
+include_directories( External/SDL_mixer/include )
 
 # ImgUI
 add_subdirectory( External/prev_imgui )

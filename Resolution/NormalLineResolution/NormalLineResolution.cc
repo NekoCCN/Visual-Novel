@@ -52,7 +52,7 @@ bool vn::resolution::NormalLineResolution::resolve(const std::string& line)
 	std::string::const_iterator command_it = buf.cbegin();
 	while (regex_search(command_it, buf.cend(), res, plural_regex_))
 	{
-		character_buf.push_back(res[1]);
+		command_buf.push_back(res[1]);
 		command_it = res.suffix().first;
 	}
 

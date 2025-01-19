@@ -6,6 +6,7 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <Render/LogWindow/LogWindow.h>
 #include "../FormatChecker/FormatChecker.h"
 
 namespace vn

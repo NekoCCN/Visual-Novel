@@ -7,6 +7,7 @@ set (VisualNovelRequire
   VisualNovelCore
   VisualNovelAsset
   VisualNovelRender
+  VisualNovelResolution
 )
 
 target_link_libraries (VisualNovel ${VisualNovelRequire})

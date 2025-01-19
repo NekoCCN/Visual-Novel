@@ -17,6 +17,8 @@ namespace vn
 		{
 		private:
 			bool render_status_ = false;
+			bool success_choose_file = false;
+
 			std::string src_path_;
 			std::string folder_path_;
 			std::string dst_path_;
@@ -28,6 +30,16 @@ namespace vn
 			bool getRenderStatus() const
 			{
 				return render_status_;
+			}
+			bool isSuccess()
+			{
+				if (success_choose_file == true)
+				{
+					success_choose_file = false;
+                    return true;
+				}
+
+				return false;
 			}
 			void renderAndResponse()
 			{
@@ -65,9 +77,18 @@ namespace vn
 				}
 				ImGui::InputText("Destination File Path", &dst_path_);
 
+				ImGui::NewLine();
+
 				if (ImGui::Button("OK"))
 				{
 					render_status_ = false;
+					success_choose_file = true;
+				}
+				ImGui::SameLine();
+                if (ImGui::Button("Cancel"))
+				{
+					render_status_ = false;
+					success_choose_file = false;
 				}
 
 				if (ImGuiFileDialog::Instance()->Display("MainChooseFile1"))
@@ -105,6 +126,14 @@ namespace vn
 			const std::string& getSrcFilePath() const
 			{
 				return src_path_;
+			}
+			const std::string& getFolderPath() const
+			{
+				return folder_path_;
+			}
+            const std::string& getDstFilePath() const
+			{
+				return dst_path_;
 			}
 			~ChooseFile()
 			{
