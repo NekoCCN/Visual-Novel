@@ -7,6 +7,7 @@
 #include <Core/Window/Window.h>
 #include <Core/CoordinateSystem/RatioCoordinateSystem.h>
 #include <Core/GuiContext/GuiContext.h>
+#include <Core/SpscQueue/SpscQueue.h>
 #include <Asset/ThemePack/ThemePack.h>
 #include <Asset/AssetPackWStream/AssetPackWStream.h>
 #include <Asset/ThemePackCreator/ThemePackCreator.h>

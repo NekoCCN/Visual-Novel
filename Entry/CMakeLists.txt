@@ -4,6 +4,7 @@ add_executable (VisualNovel "Application.cc")
 
 set (VisualNovelRequire
   SDL3_ttf::SDL3_ttf
+  soloud
   VisualNovelCore
   VisualNovelAsset
   VisualNovelRender

@@ -9,12 +9,12 @@ set(Core_SRC
   "Transform/Transform.h" 
   "Transform/Transform.cc" 
   "CommandList/CommandList.h"
-  "SpscQueue/atomicops.h"
-  "SpscQueue/readerwriterqueue.h"
   "LogSystem/LogFunction.h"
   "LogSystem/LogFunction.cc"
   "CoordinateSystem/RatioCoordinateSystem.h"
- "GuiContext/GuiContext.h")
+  "GuiContext/GuiContext.h" 
+  "SpscQueue/SpscQueue.h"
+)
 
 add_library(VisualNovelCore STATIC ${Core_SRC})
 
