@@ -68,14 +68,16 @@ namespace vn
 			static constexpr uint64_t MAX_BUFFER_SIZE = 1024 * 1024 * 10;     // 10MB
 			static constexpr uint64_t ERROR_BUFFER_SIZE = 1024 * 1024;          // 1MB fallback buffer
 
-			uint64_t chunkWriteByPath(const std::string& path);
-			uint64_t chunkWriteByStorage(const std::string& path);
+			bool chunkWriteByPath(const std::string& path, uint64_t& return_index);
+			bool chunkWriteByStorage(const std::string& path, uint64_t& return_index);
 
 			bool haveStorage_;
 			SDL_Storage* storage_;
 		public:
 			AssetPackWStream(const std::string& dst_path, SDL_Storage* storage = nullptr)
 			{
+				toc_.push_back(0);
+
 				if (storage_ == nullptr)
 				{
 					haveStorage_ = false;
