@@ -23,13 +23,23 @@ add_subdirectory( External/SDL )
 include_directories( External/SDL/include )
 
 # SDL Extension
-add_subdirectory( External/SDL_image )
-include_directories( External/SDL_image/include )
 add_subdirectory( External/SDL_ttf )
 include_directories( External/SDL_ttf/include )
-add_subdirectory( External/SDL_mixer )
-include_directories( External/SDL_mixer/include )
+add_subdirectory( External/SDL_image )
+include_directories( External/SDL_image/include )
+
+# Now the problem is that SDL_mixer and SDL_image cannot participate in cmake generation together when using cmake cache instead of rebuilding.
+# Unless you don't use the vendor library
+# This might be a bug
+
+# add_subdirectory( External/SDL_mixer )
+# include_directories( External/SDL_mixer/include )
 
 # ImgUI
 add_subdirectory( External/prev_imgui )
 include_directories( External/prev_imgui )
+
+# SoLoud
+add_compile_definitions ( WITH_MINIAUDIO )
+add_subdirectory ( External/prev_soloud )
+include_directories ( External/prev_soloud/soloud/include )
