@@ -17,3 +17,6 @@
 [submodule "External/SDL_mixer"]
 	path = External/SDL_mixer
 	url = https://github.com/libsdl-org/SDL_mixer
+[submodule "External/prev_soloud/soloud"]
+	path = External/prev_soloud/soloud
+	url = https://github.com/jarikomppa/soloud.git
