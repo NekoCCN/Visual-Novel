@@ -17,35 +17,45 @@ namespace vn
 		public:
 			struct ProgramIndex
 			{
-				std::vector<uint32_t> animate_speed;
 				std::vector<std::string> character_name_list;
+
+				std::vector<uint32_t> animate_speed;
 				std::vector<std::vector<std::string>> character_asset_path_list;
 
 				std::string background_image_path;
 				std::string background_sound_path;
 
+				std::string str;
+
 				std::vector<std::string> other_sound;
 
 				std::string command;
 				std::vector<std::string> command_arguments;
+				std::vector<std::string> command_asset_path;
 			};
 			struct ProgramIndexInner
 			{
-				std::vector<uint32_t> animate_speed;
 				std::vector<uint64_t> character_name_index_list;
+
+				std::vector<uint32_t> animate_speed;
 				std::vector<std::vector<uint64_t>> character_asset_index_list;
 
 				uint64_t background_image_index;
 				uint64_t background_sound_index;
 
+				uint64_t string_index;
+
 				std::vector<uint64_t> other_sound_index;
 
 				std::string command;
 				std::vector<std::string> command_arguments;
+				std::vector<uint64_t> command_asset_index;
 			};
 			class chunk_error
 			{
+			private:
 				std::string message;
+			public:
 				chunk_error(const std::string& message = "NULL") : message(message) {}
 				const char* what() const noexcept
 				{
@@ -63,18 +73,31 @@ namespace vn
 			std::vector<std::string> character_name_list_;
 			std::map<std::string, uint64_t> character_name_table_;
 
-			std::vector<ProgramIndex> program_index_list_;
+			std::vector<ProgramIndexInner> program_index_inner_list_;
 
-			static constexpr uint64_t MAX_BUFFER_SIZE = 1024 * 1024 * 10;     // 10MB
-			static constexpr uint64_t ERROR_BUFFER_SIZE = 1024 * 1024;          // 1MB fallback buffer
+			std::string label_ = "VN_PACK";
+
+			static constexpr uint64_t MAX_BUFFER_SIZE = 1024ll * 1024ll * 10ll;     // 10MB
+			static constexpr uint64_t ERROR_BUFFER_SIZE = 1024ll * 1024ll;          // 1MB fallback buffer
 
 			bool chunkWriteByPath(const std::string& path, uint64_t& return_index);
 			bool chunkWriteByStorage(const std::string& path, uint64_t& return_index);
+			uint64_t chunkWrite(const std::string& path);
+			uint64_t WriteString(const std::string& str)
+			{
+				if (SDL_WriteIO(wstream_, str.c_str(), str.size() + 1) != str.size() + 1)
+				{
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to write string");
+                    throw chunk_error();
+				}
+				toc_.push_back(toc_[toc_.size() - 1] + str.size() + 1);
+				return toc_.size() - 1;
+			}
 
 			bool haveStorage_;
 			SDL_Storage* storage_;
 		public:
-			AssetPackWStream(const std::string& dst_path, SDL_Storage* storage = nullptr)
+			AssetPackWStream(const std::string& dst_path, SDL_Storage* storage = nullptr) : storage_(storage)	
 			{
 				toc_.push_back(0);
 
@@ -125,10 +148,126 @@ namespace vn
 						throw core::exception::file_not_found_error();
 					}
 				}
+
+				constexpr uint64_t resources_offset = 0;
+				constexpr uint64_t toc_size = 0;
+				constexpr uint64_t program_index_size = 0;
+				SDL_WriteIO(wstream_, label_.c_str(), label_.size() + 1);
+				SDL_WriteIO(wstream_, &resources_offset, sizeof(uint64_t));
+                SDL_WriteIO(wstream_, &toc_size, sizeof(uint64_t));
+				SDL_WriteIO(wstream_, &program_index_size, sizeof(uint64_t));
 			}
+
 			AssetPackWStream& operator<<(const ProgramIndex& program_index);
+			/*
+				std::vector<uint64_t> character_name_index_list;
+
+				std::vector<uint32_t> animate_speed;
+				std::vector<std::vector<uint64_t>> character_asset_index_list;
+
+				uint64_t background_image_index;
+				uint64_t background_sound_index;
+
+				uint64_t string_index;
+
+				std::vector<uint64_t> other_sound_index;
+
+				std::string command;
+				std::vector<std::string> command_arguments;
+				std::vector<uint64_t> command_asset_index;
+			*/
+			void endFile() const
+			{
+				auto WriteIO = [&](SDL_IOStream* stream, const void* data, size_t size) -> void
+				{
+					if (SDL_WriteIO(stream, data, size) != size)
+					{
+						SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to write data");
+						throw chunk_error();
+					}
+				};
+
+				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_END);
+
+				try
+				{
+					WriteIO(wstream_, toc_.data(), sizeof(uint64_t) * toc_.size());
+
+					uint64_t buf = 0;
+					for (auto& x : program_index_inner_list_)
+					{
+						buf = x.character_name_index_list.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.character_name_index_list)
+						{
+							WriteIO(wstream_, &y, sizeof(uint64_t));
+						}
+
+						buf = x.animate_speed.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.animate_speed)
+						{
+							WriteIO(wstream_, &y, sizeof(uint32_t));
+						}
+
+						buf = x.character_asset_index_list.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.character_asset_index_list)
+						{
+							buf = y.size();
+							WriteIO(wstream_, &buf, sizeof(uint64_t));
+							for (auto& z : y)
+							{
+								WriteIO(wstream_, &z, sizeof(uint64_t));
+							}
+						}
+
+						buf = x.background_image_index;
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						buf = x.background_sound_index;
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+
+						buf = x.string_index;
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+
+						buf = x.other_sound_index.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.other_sound_index)
+						{
+							WriteIO(wstream_, &y, sizeof(uint64_t));
+						}
+
+						buf = x.command.size() + 1;
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						WriteIO(wstream_, x.command.c_str(), buf);
+
+						buf = x.command_arguments.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.command_arguments)
+						{
+							buf = y.size() + 1;
+							WriteIO(wstream_, &buf, sizeof(uint64_t));
+							WriteIO(wstream_, y.c_str(), buf);
+						}
+
+						buf = x.command_asset_index.size();
+						WriteIO(wstream_, &buf, sizeof(uint64_t));
+						for (auto& y : x.command_asset_index)
+						{
+							WriteIO(wstream_, &y, sizeof(uint64_t));
+						}
+					}
+				}
+				catch (const chunk_error& e)
+				{
+					SDL_LogError(SDL_LOG_CATEGORY_ERROR, "EndFile error: %s", e.what());
+					throw;
+				}
+			}
+
 			~AssetPackWStream()
 			{
+				endFile();
 				SDL_CloseIO(wstream_);
 			}
         };

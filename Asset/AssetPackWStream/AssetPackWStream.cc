@@ -43,7 +43,7 @@ bool vn::asset::AssetPackWStream::chunkWriteByPath(const std::string& path, uint
             SDL_CloseIO(rstream);
             return false;
         }
-        
+
         SDL_WriteIO(wstream_, buffer, size);
     }
     catch (const std::bad_alloc&)
@@ -63,7 +63,7 @@ bool vn::asset::AssetPackWStream::chunkWriteByPath(const std::string& path, uint
             uint64_t remaining_size = size;
 
             SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Using normal chunk write for file %s", path.c_str());
-            
+
             while (remaining_size > 0)
             {
                 uint32_t chunk_size = std::min(remaining_size, MAX_BUFFER_SIZE);
@@ -145,6 +145,7 @@ bool vn::asset::AssetPackWStream::chunkWriteByPath(const std::string& path, uint
 
     return true;
 }
+
 bool vn::asset::AssetPackWStream::chunkWriteByStorage(const std::string& path, uint64_t& return_index)
 {
     if (path_index_table_.find(path) != path_index_table_.end())
@@ -276,4 +277,80 @@ bool vn::asset::AssetPackWStream::chunkWriteByStorage(const std::string& path, u
     }
 
     return true;
+}
+
+uint64_t vn::asset::AssetPackWStream::chunkWrite(const std::string& path)
+{
+    uint64_t asset_index_buf = 0;
+    if (haveStorage_ == true)
+    {
+        if (chunkWriteByStorage(path, asset_index_buf) == false)
+        {
+            SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Failed to write storage path file %s, Try to use absolute path", path.c_str());
+            if (chunkWriteByPath(path, asset_index_buf) == false)
+            {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to write path file %s", path.c_str());
+                throw chunk_error();
+            }
+        }
+    }
+    else
+    {
+        if (chunkWriteByPath(path, asset_index_buf) == false)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to write path file %s", path.c_str());
+            throw chunk_error();
+        }
+    }
+    return asset_index_buf;
+}
+
+vn::asset::AssetPackWStream& vn::asset::AssetPackWStream::operator<<(const ProgramIndex& program_index)
+{
+    ProgramIndexInner program_index_inner_buf;
+
+    for (auto& x : program_index.character_name_list)
+    {
+        if (character_name_table_.find(x) == character_name_table_.end())
+        {
+            character_name_list_.push_back(x);
+            character_name_table_.insert(std::make_pair(x, character_name_list_.size() - 1));
+        }
+
+        program_index_inner_buf.character_name_index_list.push_back(character_name_table_.at
+        (x));
+    }
+
+    program_index_inner_buf.animate_speed = program_index.animate_speed;
+
+    std::vector<uint64_t> asset_index_vec_buf;
+    for (auto& x : program_index.character_asset_path_list)
+    {
+        for (auto& y : x)
+        {
+            // Notice Throw Chunk Exception
+            asset_index_vec_buf.push_back(chunkWrite(y));
+        }
+        program_index_inner_buf.character_asset_index_list.push_back(asset_index_vec_buf);
+    }
+
+    program_index_inner_buf.background_image_index = chunkWrite(program_index.background_image_path);
+    program_index_inner_buf.background_sound_index = chunkWrite(program_index.background_sound_path);
+
+    program_index_inner_buf.string_index = WriteString(program_index.str);
+
+    for (auto& x : program_index.other_sound)
+    {
+        program_index_inner_buf.other_sound_index.push_back(chunkWrite(x));
+    }
+
+    program_index_inner_buf.command = program_index.command;
+    program_index_inner_buf.command_arguments = program_index.command_arguments;
+
+    for (auto& x : program_index.command_asset_path)
+    {
+        program_index_inner_buf.command_asset_index.push_back(chunkWrite(x));
+    }
+
+    return *this;
 }

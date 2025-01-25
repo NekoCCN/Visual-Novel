@@ -11,4 +11,4 @@ file(GLOB SOLOUDSRC
 
 add_library(soloud STATIC ${SOLOUDSRC})
 
-target_include_directories(soloud PUBLIC soloud)
+target_include_directories(soloud PUBLIC soloud/include )
