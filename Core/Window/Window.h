@@ -14,7 +14,7 @@ namespace vn
 		class Window
 		{
 		public:
-			Window(const char* title, uint32_t width = 1280, uint32_t height = 720, SDL_WindowFlags flags = SDL_WINDOW_HIDDEN, const char* drive = nullptr);
+			Window(const char* title, uint32_t width = 1280, uint32_t height = 720, const char* drive = nullptr, SDL_WindowFlags flags = SDL_WINDOW_HIDDEN);
 			~Window()
 			{
 				SDL_DestroyRenderer(sdl_renderer_);

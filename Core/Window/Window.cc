@@ -3,7 +3,7 @@
 
 using namespace vn;
 
-core::Window::Window(const char* title, uint32_t width, uint32_t height, SDL_WindowFlags flags, const char* drive)
+core::Window::Window(const char* title, uint32_t width, uint32_t height, const char* drive, SDL_WindowFlags flags)
 {
 	// window part
 	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to create a window");

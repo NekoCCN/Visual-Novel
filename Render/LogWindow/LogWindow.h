@@ -2,6 +2,7 @@
 #ifndef VISUALNOVEL_LOGWINDOW_H
 #define VISUALNOVEL_LOGWINDOW_H
 #include <imgui.h>
+#include <mutex>
 #include <SDL3/SDL_log.h>
 
 namespace vn
@@ -27,9 +28,10 @@ namespace vn
                 int line_end;
             };
 
+            std::mutex mtx_;
             std::vector<LogEntry> entries_;
 
-            const char* prefix_to_level(SDL_LogPriority level)
+            static const char* prefix_to_level(const SDL_LogPriority level)
             {
                 switch (level)
                 {
@@ -50,24 +52,24 @@ namespace vn
                 }
             }
 
-            ImVec4 get_level_color(SDL_LogPriority level)
+            static ImVec4 get_level_color(const SDL_LogPriority level)
             {
                 switch (level)
                 {
                 case SDL_LOG_PRIORITY_VERBOSE:
-                    return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);  // 灰色
+                    return {0.5f, 0.5f, 0.5f, 1.0f};  // 灰色
                 case SDL_LOG_PRIORITY_DEBUG:
-                    return ImVec4(0.0f, 1.0f, 0.0f, 1.0f);  // 绿色
+                    return {0.0f, 1.0f, 0.0f, 1.0f};  // 绿色
                 case SDL_LOG_PRIORITY_INFO:
-                    return ImVec4(0.0f, 0.0f, 0.0f, 1.0f);  // 白色
+                    return {0.0f, 0.0f, 0.0f, 1.0f};  // 白色
                 case SDL_LOG_PRIORITY_WARN:
-                    return ImVec4(1.0f, 1.0f, 0.0f, 1.0f);  // 黄色
+                    return {1.0f, 1.0f, 0.0f, 1.0f};  // 黄色
                 case SDL_LOG_PRIORITY_ERROR:
-                    return ImVec4(1.0f, 0.0f, 0.0f, 1.0f);  // 红色
+                    return {1.0f, 0.0f, 0.0f, 1.0f};  // 红色
                 case SDL_LOG_PRIORITY_CRITICAL:
-                    return ImVec4(1.0f, 0.0f, 1.0f, 1.0f);  // 紫色
+                    return {1.0f, 0.0f, 1.0f, 1.0f};  // 紫色
                 default:
-                    return ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+                    return {1.0f, 1.0f, 1.0f, 1.0f};
                 }
             }
 
@@ -77,8 +79,11 @@ namespace vn
                 clear();
             }
 
-            void log(SDL_LogPriority level, const char* fmt, ...) IM_FMTARGS(3)
+            // Large-granularity mutex lock to ensure thread safety, may be slow
+            void log(const SDL_LogPriority level, const char* fmt, ...) IM_FMTARGS(3)
             {
+                std::lock_guard<std::mutex> lock(mtx_);
+
                 char buf[1024];
                 va_list args;
                 va_start(args, fmt);

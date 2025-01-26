@@ -22,9 +22,12 @@ namespace vn
 		{
 		private:
 			ImGuiIO* io;
-			std::shared_ptr<char> font_data;
+
+			char* font_data_ = nullptr;
+			uint64_t font_size_;
 		public:
 			GuiContext(const std::shared_ptr<core::Window>& window, const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 30.0f)
+				: font_size_(font_size)
 			{
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Creating GUI Context");
 				IMGUI_CHECKVERSION();
@@ -40,20 +43,44 @@ namespace vn
 				ImGui_ImplSDL3_InitForSDLRenderer(window->getWindowHinding(), window->getRendererHinding());
 				ImGui_ImplSDLRenderer3_Init(window->getRendererHinding());
 
-				if (font_data != nullptr)
+				
+				if (font_data != nullptr && font_size_ > 0)
 				{
-					char* font_copy = new char[font_size];
-					memcpy(font_copy, font_data.get(), font_size);
+					font_data_ = new char[font_size];
+                    memcpy(font_data_, font_data.get(), font_size);
 					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Load Font");
-					io->Fonts->AddFontFromMemoryTTF(font_copy, font_size, size_pixels);
+					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, size_pixels);
 				}
 			}
-			ImGuiIO& getIOContext()
+			void reloadFont(const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 30.0f)
+			{
+				if (font_data != nullptr)
+				{
+					font_data_ = new char[font_size];
+					memcpy(font_data_, font_data.get(), font_size);
+					font_size_ = font_size;
+				}
+				if (font_data_ != nullptr)
+				{
+					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Load Font");
+					io->Fonts->Clear();
+					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, size_pixels);
+				}
+			}
+			void whenChangedWindowSize() const
+			{
+				if (font_data_ != nullptr)
+				{
+					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, std::min(ImGui::GetIO().DisplaySize.y, ImGui::GetIO().DisplaySize.x) * 0.03);
+				}
+			}
+			ImGuiIO& getIOContext() const
 			{
 				return *io;
 			}
 			~GuiContext()
 			{
+				// Notice : This code will clean up the memory pointed to by the font pointer
 				ImGui_ImplSDLRenderer3_Shutdown();
 				ImGui_ImplSDL3_Shutdown();
 				ImGui::DestroyContext();

@@ -14,7 +14,7 @@ set(Core_SRC
   "CoordinateSystem/RatioCoordinateSystem.h"
   "GuiContext/GuiContext.h" 
   "SpscQueue/SpscQueue.h"
-)
+ "TSVector/TSVector.h")
 
 add_library(VisualNovelCore STATIC ${Core_SRC})
 

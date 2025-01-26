@@ -58,7 +58,7 @@ namespace vn
 			std::shared_ptr<resolution::DefinedPart> define_part_;
 
 			// Response Part Function
-			void Response_main_menu(SDL_Event* event, int32_t& status)
+			void Response_main_menu(SDL_Event* event, int32_t& status) const
 			{
 				uint32_t click = 0;
 
@@ -90,11 +90,11 @@ namespace vn
 			}
 			
 			// Render All Function
-			void renderAll()
+			void renderAll() const
 			{
 				main_menu_->render();
 			}
-			void guiRenderAll()
+			void guiRenderAll() const
 			{
 				choose_file_->renderAndResponse();
 				choose_vnap_->renderAndResponse();
