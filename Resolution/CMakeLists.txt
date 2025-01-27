@@ -4,7 +4,10 @@ set(Resolution_SRC
   "NormalLineResolution/NormalLineResolution.h"
   "NormalLineResolution/NormalLineResolution.cc"
   "DefinedPart/DefinePart.h"
-  "DefinedPart/DefinePart.cc")
+  "DefinedPart/DefinePart.cc"
+  "CommandFactory/CommandFactory.h"
+  "EntryPoint.h"
+  "EntryPoint.cc")
 
 add_library(VisualNovelResolution STATIC ${Resolution_SRC})
 

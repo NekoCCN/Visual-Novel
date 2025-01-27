@@ -20,38 +20,66 @@ namespace vn
 
 			std::regex character_regex_;
 
-			std::regex plural_regex_ ;
+			std::regex plural_regex_;
+
+			std::regex command_plural_regex_;
 
 			std::regex command_regex_;
 
 			std::regex string_regex_;
 
-			std::vector<std::string> character_buf;
-            std::vector<std::string> command_buf;
+			std::vector<std::string> character_name_buf_;  // Display name
+			std::vector<std::string> character_inner_name_buf_;  // Bind a asset
+			
+			std::vector<std::string> ori_command_buf_;
+            std::vector<std::string> command_buf_;
+			std::vector<std::string> command_asset_path_buf_;
+			std::vector<std::string> command_arguments_buf_;
+
             std::string string_buf;
+
+			bool oriResolve(const std::string& line);
+			bool transformOriCommand();
+			void transformCharacterName();
 		public:
-			NormalLineResolution() : normal_line_regex_(presets::normalLineRegexChecker())
+			NormalLineResolution();
+			bool resolve(const std::string& line)
 			{
-				character_regex_ = std::regex(R"(\[(.*)\])");
+                if (oriResolve(line))
+                {
+					if (!transformOriCommand())
+					{
+						return false;
+					}
 
-				plural_regex_ = std::regex(R"([^\s,]+)");
-
-				command_regex_ = std::regex(R"(\{([\d\w\s,]*)\})");
-
-				string_regex_ = std::regex(R"(\]\s+(.*)\s+\{)");
-			}
-			bool resolve(const std::string& line);
-			const std::vector<std::string>& getCharacterBuf()
-			{
-                return character_buf;
-			}
-			const std::vector<std::string>& getCommandBuf()
-			{
-                return command_buf;
+                    transformCharacterName();
+                    return true;
+                }
+                return false;
 			}
             const std::string& getStringBuf()
             {
                 return string_buf;
+            }
+			const std::vector<std::string>& getCharacterNameBuf()
+			{
+				return character_name_buf_;
+			}
+			const std::vector<std::string>& getCharacterInnerNameBuf()
+            {
+                return character_inner_name_buf_;
+            }
+            const std::vector<std::string>& getCommandBuf()
+            {
+                return command_buf_;
+            }
+            const std::vector<std::string>& getCommandAssetPathBuf()
+            {
+                return command_asset_path_buf_;
+            }
+            const std::vector<std::string>& getCommandArgumentsBuf()
+            {
+                return command_arguments_buf_;
             }
 		};
 	}

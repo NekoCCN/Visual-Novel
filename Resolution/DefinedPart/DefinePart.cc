@@ -32,6 +32,12 @@ bool vn::resolution::DefinedPart::getLine(SDL_IOStream* rstream, std::string& bu
 
     return true;
 }
+
+vn::resolution::DefinedPart::DefinedPart(): define_line_checker(presets::bootDefinedLineRegexChecker())
+{
+	define_line_regex = R"([^\s]+)";
+}
+
 bool vn::resolution::DefinedPart::resolve(SDL_IOStream* rstream, uint64_t& line_number, render::LogWindow& log_window)
 {
     clear();

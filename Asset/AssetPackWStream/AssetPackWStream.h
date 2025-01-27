@@ -4,6 +4,7 @@
 #define VISUALNOVEL_ASSETPACKWSTREAM_H
 #include <SDL3/SDL.h>
 #include <Core/Exception/Exception.h>
+#include <Core/CommandList/CommandList.h>
 #include <vector>
 #include <string>
 #include <map>
@@ -29,7 +30,7 @@ namespace vn
 
 				std::vector<std::string> other_sound;
 
-				std::string command;
+				std::vector<core::command::CommandListEnum> command;
 				std::vector<std::string> command_arguments;
 				std::vector<std::string> command_asset_path;
 			};
@@ -47,7 +48,7 @@ namespace vn
 
 				std::vector<uint64_t> other_sound_index;
 
-				std::string command;
+				std::vector<core::command::CommandListEnum> command;
 				std::vector<std::string> command_arguments;
 				std::vector<uint64_t> command_asset_index;
 			};
@@ -172,7 +173,7 @@ namespace vn
 
 				std::vector<uint64_t> other_sound_index;
 
-				std::string command;
+				std::vector<core::command::CommandListEnum> command;
 				std::vector<std::string> command_arguments;
 				std::vector<uint64_t> command_asset_index;
 			*/
@@ -237,9 +238,13 @@ namespace vn
 							WriteIO(wstream_, &y, sizeof(uint64_t));
 						}
 
-						buf = x.command.size() + 1;
-						WriteIO(wstream_, &buf, sizeof(uint64_t));
-						WriteIO(wstream_, x.command.c_str(), buf);
+						
+						buf  = x.command.size();
+                        WriteIO(wstream_, &buf, sizeof(uint64_t));
+                        for (auto& y : x.command)
+						{
+                            WriteIO(wstream_, &y, sizeof(core::command::CommandListEnum));
+                        }
 
 						buf = x.command_arguments.size();
 						WriteIO(wstream_, &buf, sizeof(uint64_t));

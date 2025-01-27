@@ -41,7 +41,7 @@ namespace vn
 			}
 			inline RegexChecker backgroundLineRegexChecker()
 			{
-				return { R"(^(.*)(.*)$)" };
+				return { R"(^\((.*)\)##\((.*)\)$)" };
 			}
 			inline RegexChecker bootDefinedLineRegexChecker()
 			{

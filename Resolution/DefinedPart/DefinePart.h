@@ -20,22 +20,19 @@ namespace vn
 		// Consider pure UTF-8 for now
 		class DefinedPart
 		{
+		public:
+			typedef std::pair<std::vector<std::string>, uint32_t> AnimationPair;
 		private:
 			RegexChecker define_line_checker;
 
 			std::regex define_line_regex;
 
-			typedef std::pair<std::vector<std::string>, uint32_t> animationPair;
-
 			std::map<std::string, std::string> define_image_map;
-			std::map<std::string, animationPair> define_animation_map;
+			std::map<std::string, AnimationPair> define_animation_map;
 
 			static bool getLine(SDL_IOStream* rstream, std::string& buf);
 		public:
-			DefinedPart() : define_line_checker(presets::bootDefinedLineRegexChecker())
-			{
-				define_line_regex = R"([^\s]+)";
-			}
+			DefinedPart();
 			bool resolve(SDL_IOStream* rstream, uint64_t& line_number, render::LogWindow& log_window);
 			void clear()
 			{

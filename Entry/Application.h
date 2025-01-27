@@ -16,6 +16,7 @@
 #include <Render/FileWeiget/ChooseVnap.h>
 #include <Render/LogWindow/LogWindow.h>
 #include <Resolution/DefinedPart/DefinePart.h>
+#include <Resolution/EntryPoint.h>
 #include <memory>
 #include <string>
 
