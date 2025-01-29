@@ -101,7 +101,7 @@ bool vn::resolution::DefinedPart::resolve(SDL_IOStream* rstream, uint64_t& line_
                 log_window.log(SDL_LOG_PRIORITY_ERROR, "[Line: %ld] Invalid define line format", line_number);
                 return false;
             }
-            define_animation_map.emplace(std::make_pair<std::string, animationPair>(std::string(res_buf[1]),
+            define_animation_map.emplace(std::make_pair<std::string, AnimationPair>(std::string(res_buf[1]),
                 std::make_pair(std::vector<std::string>(res_buf.begin() + 1, res_buf.end() - 1), speed)));
 
             log_window.log(SDL_LOG_PRIORITY_INFO, "[Line: %ld] Define %s to animation with speed %d", line_number, res_buf[0].c_str(), speed);

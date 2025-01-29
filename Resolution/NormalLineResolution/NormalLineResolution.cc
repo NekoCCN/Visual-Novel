@@ -38,7 +38,7 @@ bool vn::resolution::NormalLineResolution::oriResolve(const std::string& line)
 	std::string::const_iterator character_it = buf.cbegin();
 	while (regex_search(character_it, buf.cend(), res, plural_regex_))
 	{
-		character_inner_name_buf_.push_back(res[1]);
+		character_inner_name_buf_.push_back(res[0]);
 		character_it = res.suffix().first;
 	}
 

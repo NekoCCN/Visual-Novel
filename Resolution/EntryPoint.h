@@ -17,10 +17,14 @@ namespace vn
         class EntryPoint
         {
         private:
+            core::command::CommandList command_list_;
+
             NormalLineResolution normal_line_resolution_;
             DefinedPart defined_part_;
 
-            asset::AssetPackWStream wstream_;
+            std::string dst_path_;
+            SDL_Storage* storage_;
+
             SDL_IOStream* rstream_;
 
             RegexChecker background_checker_;
@@ -30,11 +34,25 @@ namespace vn
             bool getLine(std::string& buf) const;
         public:
             explicit EntryPoint(const std::string& src_path, const std::string& dst_path, SDL_Storage* storage = nullptr)
-                : wstream_(dst_path, storage), background_checker_(presets::backgroundLineRegexChecker())
+                : dst_path_(dst_path), storage_(storage), background_checker_(presets::backgroundLineRegexChecker())
             {
                 rstream_ = SDL_IOFromFile(src_path.c_str(), "rb");
+                if (rstream_ == nullptr)
+                {
+                    SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to open file: %s", SDL_GetError());
+                    throw core::exception::file_not_found_error();
+                }
             }
+
             bool operator()(render::LogWindow& log_window);
+
+            ~EntryPoint()
+            {
+                if (rstream_)
+                {
+                    SDL_CloseIO(rstream_);
+                }
+            }
         };
 	}
 }

@@ -18,15 +18,21 @@ namespace vn
 			class CommandList
 			{
 			private:
-				static std::map<std::string, CommandListEnum> command_list_;
-				static bool is_init_;
+				std::map<std::string, CommandListEnum> command_list_;
 			public:
 				CommandList()
 				{
-					if (is_init_ == 0)
+					command_list_.insert(std::pair<std::string, CommandListEnum>("play_sound", play_sound));
+				}
+
+				bool resolve(const std::string& str, CommandListEnum& val)
+				{
+					if (command_list_.find(str) == command_list_.end())
 					{
-						command_list_.insert(std::pair<std::string, CommandListEnum>("play_sound", play_sound));
+						return false;
 					}
+					val = command_list_.at(str);
+					return true;
 				}
 			};
 		}

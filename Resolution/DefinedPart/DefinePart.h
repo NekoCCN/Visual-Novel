@@ -34,6 +34,15 @@ namespace vn
 		public:
 			DefinedPart();
 			bool resolve(SDL_IOStream* rstream, uint64_t& line_number, render::LogWindow& log_window);
+			const std::map<std::string, std::string>& getCharacterImageMap() const
+			{
+				return define_image_map;
+			}
+            const std::map<std::string, AnimationPair>& getCharacterAnimationMap() const
+			{
+				return define_animation_map;
+			}
+
 			void clear()
 			{
                 define_image_map.clear();

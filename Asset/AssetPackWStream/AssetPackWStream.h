@@ -28,8 +28,6 @@ namespace vn
 
 				std::string str;
 
-				std::vector<std::string> other_sound;
-
 				std::vector<core::command::CommandListEnum> command;
 				std::vector<std::string> command_arguments;
 				std::vector<std::string> command_asset_path;
@@ -41,12 +39,10 @@ namespace vn
 				std::vector<uint32_t> animate_speed;
 				std::vector<std::vector<uint64_t>> character_asset_index_list;
 
-				uint64_t background_image_index;
-				uint64_t background_sound_index;
+				int64_t background_image_index;
+				int64_t background_sound_index;
 
-				uint64_t string_index;
-
-				std::vector<uint64_t> other_sound_index;
+				int64_t string_index;
 
 				std::vector<core::command::CommandListEnum> command;
 				std::vector<std::string> command_arguments;
@@ -97,6 +93,8 @@ namespace vn
 
 			bool haveStorage_;
 			SDL_Storage* storage_;
+
+			bool is_done_ = false;
 		public:
 			AssetPackWStream(const std::string& dst_path, SDL_Storage* storage = nullptr) : storage_(storage)	
 			{
@@ -133,14 +131,6 @@ namespace vn
 					}
 
 					storage_ = storage;
-					wstream_ = SDL_IOFromFile(dst_path.c_str(), "rb");
-					if (wstream_ != nullptr)
-					{
-						SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "File name exist : %s", dst_path.c_str());
-						SDL_CloseIO(wstream_);
-						throw core::exception::file_existed_error();
-					}
-					SDL_CloseIO(wstream_);
 
 					wstream_ = SDL_IOFromFile(dst_path.c_str(), "wb");
 					if (wstream_ == nullptr)
@@ -148,14 +138,22 @@ namespace vn
 						SDL_LogError(SDL_LOG_CATEGORY_ERROR, "AssetPackWStream: Failed to open file %s", dst_path.c_str());
 						throw core::exception::file_not_found_error();
 					}
+					if (SDL_TellIO(wstream_) != 0)
+					{
+						SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "File name exist : %s", dst_path.c_str());
+						SDL_CloseIO(wstream_);
+						throw core::exception::file_existed_error();
+					}
 				}
 
 				constexpr uint64_t resources_offset = 0;
 				constexpr uint64_t toc_size = 0;
+				constexpr uint64_t character_name_size = 0;
 				constexpr uint64_t program_index_size = 0;
 				SDL_WriteIO(wstream_, label_.c_str(), label_.size() + 1);
 				SDL_WriteIO(wstream_, &resources_offset, sizeof(uint64_t));
                 SDL_WriteIO(wstream_, &toc_size, sizeof(uint64_t));
+				SDL_WriteIO(wstream_, &character_name_size, sizeof(uint64_t));
 				SDL_WriteIO(wstream_, &program_index_size, sizeof(uint64_t));
 			}
 
@@ -177,8 +175,13 @@ namespace vn
 				std::vector<std::string> command_arguments;
 				std::vector<uint64_t> command_asset_index;
 			*/
-			void endFile() const
+			void endFile()
 			{
+				if (is_done_ == true)
+				{
+					return;
+				}
+
 				auto WriteIO = [&](SDL_IOStream* stream, const void* data, size_t size) -> void
 				{
 					if (SDL_WriteIO(stream, data, size) != size)
@@ -188,11 +191,34 @@ namespace vn
 					}
 				};
 
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPackWStream: End file");
+
+				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_CUR);
+
+				uint64_t tmp;
+
+				WriteIO(wstream_, &label_, label_.size() + 1);
+                tmp = SDL_TellIO(wstream_);
+                SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+				tmp = toc_.size();
+                SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+				tmp = character_name_list_.size();
+                SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+				tmp = program_index_inner_list_.size();
+                SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+
 				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_END);
 
 				try
 				{
 					WriteIO(wstream_, toc_.data(), sizeof(uint64_t) * toc_.size());
+					
+					for (auto& x : character_name_list_)
+					{
+						uint64_t size = x.size() + 1;
+						WriteIO(wstream_, &size, sizeof(uint64_t));
+                        WriteIO(wstream_, x.c_str(), x.size() + 1);
+					}
 
 					uint64_t buf = 0;
 					for (auto& x : program_index_inner_list_)
@@ -230,14 +256,6 @@ namespace vn
 
 						buf = x.string_index;
 						WriteIO(wstream_, &buf, sizeof(uint64_t));
-
-						buf = x.other_sound_index.size();
-						WriteIO(wstream_, &buf, sizeof(uint64_t));
-						for (auto& y : x.other_sound_index)
-						{
-							WriteIO(wstream_, &y, sizeof(uint64_t));
-						}
-
 						
 						buf  = x.command.size();
                         WriteIO(wstream_, &buf, sizeof(uint64_t));
@@ -268,12 +286,17 @@ namespace vn
 					SDL_LogError(SDL_LOG_CATEGORY_ERROR, "EndFile error: %s", e.what());
 					throw;
 				}
+
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPackWStream: End file done");
+
+				is_done_ = true;
 			}
 
 			~AssetPackWStream()
 			{
 				endFile();
 				SDL_CloseIO(wstream_);
+				SDL_CloseStorage(storage_);
 			}
         };
 	}

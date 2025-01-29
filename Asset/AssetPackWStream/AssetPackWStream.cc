@@ -290,7 +290,7 @@ uint64_t vn::asset::AssetPackWStream::chunkWrite(const std::string& path)
             if (chunkWriteByPath(path, asset_index_buf) == false)
             {
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to write path file %s", path.c_str());
-                throw chunk_error();
+                throw chunk_error(path.c_str());
             }
         }
     }
@@ -299,7 +299,7 @@ uint64_t vn::asset::AssetPackWStream::chunkWrite(const std::string& path)
         if (chunkWriteByPath(path, asset_index_buf) == false)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to write path file %s", path.c_str());
-            throw chunk_error();
+            throw chunk_error(path.c_str());
         }
     }
     return asset_index_buf;
@@ -334,15 +334,24 @@ vn::asset::AssetPackWStream& vn::asset::AssetPackWStream::operator<<(const Progr
         program_index_inner_buf.character_asset_index_list.push_back(asset_index_vec_buf);
     }
 
-    program_index_inner_buf.background_image_index = chunkWrite(program_index.background_image_path);
-    program_index_inner_buf.background_sound_index = chunkWrite(program_index.background_sound_path);
+    if (!program_index.background_image_path.empty())
+    {
+        program_index_inner_buf.background_image_index = chunkWrite(program_index.background_image_path);
+    }
+    else
+    {
+        program_index_inner_buf.background_image_index = -1;
+    }
+    if (!program_index.background_sound_path.empty())
+    {
+        program_index_inner_buf.background_sound_index = chunkWrite(program_index.background_sound_path);
+    }
+    else
+    {
+        program_index_inner_buf.background_sound_index = -1;
+    }
 
     program_index_inner_buf.string_index = WriteString(program_index.str);
-
-    for (auto& x : program_index.other_sound)
-    {
-        program_index_inner_buf.other_sound_index.push_back(chunkWrite(x));
-    }
 
     program_index_inner_buf.command = program_index.command;
     program_index_inner_buf.command_arguments = program_index.command_arguments;
