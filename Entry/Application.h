@@ -93,6 +93,12 @@ namespace vn
 						}
 
 						entry_menu_->Response_main_menu(&e, status);
+
+						SDL_Rect rect = entry_menu_->getWindowChangedRect();
+						if (rect.w != 0 && rect.h != 0)
+						{
+                            changeWindowSize(rect.w, rect.h);
+						}
 					}
 
 					window_->setRenderDrawColorInt(255, 255, 255, 255);
@@ -113,7 +119,20 @@ namespace vn
 				}
 				return status;
 			}
+			void changeWindowSize(uint32_t width, uint32_t height) const
+			{
+				window_->hideWindow();
+				window_->setWindowSize(width, height);
+				window_->syncWindowChange();
 
+				ratio_coordinate_system_->reset(width, height);
+
+                entry_menu_->whenChangedWindowSize(ratio_coordinate_system_);
+				
+				gui_context_->whenChangedWindowSize(window_);
+
+				window_->showWindow();
+			}
 			~Application() = default;
 		};
 	}

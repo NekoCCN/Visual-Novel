@@ -111,6 +111,25 @@ namespace vn
 			{
 				SDL_RenderLine(sdl_renderer_, x1, y1, x2, y2);
 			}
+			void setWindowFullScreen(bool fullscreen) const
+			{
+				if (fullscreen)
+				{
+					SDL_SetWindowFullscreen(window_, true);
+				}
+				else
+				{
+					SDL_SetWindowFullscreen(window_, false);
+				}
+			}
+			void setWindowSize(uint32_t width, uint32_t height) const
+			{
+				SDL_SetWindowSize(window_, width, height);
+			}
+			void syncWindowChange() const
+			{
+				SDL_SyncWindow(window_);
+			}
 		private:
 			// Surface-based software rendering is no longer used by default.
 			// Software rendering cannot be used with hardware rendering

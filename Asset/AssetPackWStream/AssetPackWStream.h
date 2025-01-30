@@ -104,20 +104,17 @@ namespace vn
 				{
 					haveStorage_ = false;
 
-					wstream_ = SDL_IOFromFile(dst_path.c_str(), "rb");
-					if (wstream_ != nullptr)
-					{
-						SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "File name exist : %s", dst_path.c_str());
-						SDL_CloseIO(wstream_);
-						throw core::exception::file_existed_error();
-					}
-					SDL_CloseIO(wstream_);
-
 					wstream_ = SDL_IOFromFile(dst_path.c_str(), "wb");
 					if (wstream_ == nullptr)
 					{
 						SDL_LogError(SDL_LOG_CATEGORY_ERROR, "AssetPackWStream: Failed to open file %s", dst_path.c_str());
 						throw core::exception::file_not_found_error();
+					}
+					if (SDL_TellIO(wstream_) != 0)
+					{
+						SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "File name exist : %s", dst_path.c_str());
+						SDL_CloseIO(wstream_);
+						throw core::exception::file_existed_error();
 					}
 				}
 				else
@@ -193,7 +190,7 @@ namespace vn
 
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPackWStream: End file");
 
-				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_CUR);
+				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_SET);
 
 				uint64_t tmp;
 

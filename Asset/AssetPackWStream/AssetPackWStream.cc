@@ -328,7 +328,6 @@ vn::asset::AssetPackWStream& vn::asset::AssetPackWStream::operator<<(const Progr
     {
         for (auto& y : x)
         {
-            // Notice Throw Chunk Exception
             asset_index_vec_buf.push_back(chunkWrite(y));
         }
         program_index_inner_buf.character_asset_index_list.push_back(asset_index_vec_buf);
@@ -360,6 +359,8 @@ vn::asset::AssetPackWStream& vn::asset::AssetPackWStream::operator<<(const Progr
     {
         program_index_inner_buf.command_asset_index.push_back(chunkWrite(x));
     }
+
+    program_index_inner_list_.push_back(program_index_inner_buf);
 
     return *this;
 }
