@@ -91,6 +91,8 @@ namespace vn
 					success_choose_file = false;
 				}
 
+				ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x * 0.5, io.DisplaySize.y * 0.5), ImGuiCond_FirstUseEver);
+
 				if (ImGuiFileDialog::Instance()->Display("MainChooseFile1"))
 				{
 					if (ImGuiFileDialog::Instance()->IsOk())

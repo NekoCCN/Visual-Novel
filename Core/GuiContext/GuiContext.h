@@ -25,8 +25,27 @@ namespace vn
 
 			char* font_data_ = nullptr;
 			uint64_t font_size_;
+
+			static float calculateScreenScale(const float screen_width, const float screen_height, const float base_font_size = 30.0f)
+			{
+				constexpr float reference_width = 1920.0f;
+				constexpr float reference_height = 1080.0f;
+
+				float screen_diagonal = sqrt(screen_width * screen_width + screen_height * screen_height);
+				float reference_diagonal = sqrt(reference_width * reference_width + reference_height * reference_height);
+
+				float scale = screen_diagonal / reference_diagonal;
+
+				float final_scale = (scale * base_font_size) / 30.0f;
+
+				constexpr float min_scale = 0.5f;
+				constexpr float max_scale = 2.0f;
+				return std::clamp(final_scale, min_scale, max_scale);
+			}
+
 		public:
-			GuiContext(const std::shared_ptr<core::Window>& window, const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 30.0f)
+			GuiContext(const std::shared_ptr<core::Window>& window, const std::shared_ptr<char>& font_data = nullptr,
+				uint64_t font_size = 0, float size_pixels = 30.0f, float scale = 1.0f)
 				: font_size_(font_size)
 			{
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Creating GUI Context");
@@ -50,33 +69,17 @@ namespace vn
                     memcpy(font_data_, font_data.get(), font_size);
 					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Load Font");
 					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, size_pixels);
-				}
-			}
-			void reloadFont(const std::shared_ptr<char>& font_data = nullptr, uint64_t font_size = 0, float size_pixels = 30.0f)
-			{
-				if (font_data != nullptr)
-				{
-					font_data_ = new char[font_size];
-					memcpy(font_data_, font_data.get(), font_size);
-					font_size_ = font_size;
-				}
-				if (font_data_ != nullptr)
-				{
-					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Try to Load Font");
-					io->Fonts->Clear();
-					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, size_pixels);
-				}
-			}
-			void whenChangedWindowSize() const
-			{
-				if (font_data_ != nullptr)
-				{
-					io->Fonts->AddFontFromMemoryTTF(font_data_, font_size_, std::min(ImGui::GetIO().DisplaySize.y, ImGui::GetIO().DisplaySize.x) * 0.03);
+					ImGui::GetIO().FontGlobalScale = calculateScreenScale(window->getWindowRect().w, window->getWindowRect().h, size_pixels);
 				}
 			}
 			ImGuiIO& getIOContext() const
 			{
 				return *io;
+			}
+
+			static void whenChangedWindowSize(const std::shared_ptr<core::Window>& window)
+			{
+				ImGui::GetIO().FontGlobalScale = calculateScreenScale(window->getWindowRect().w, window->getWindowRect().h);
 			}
 			~GuiContext()
 			{

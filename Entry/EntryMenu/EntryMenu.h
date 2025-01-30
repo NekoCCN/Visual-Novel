@@ -36,6 +36,11 @@ namespace vn
 			// Resolution
 			std::shared_ptr<resolution::EntryPoint> resolution_entry_;
 			
+			// Window Size Change
+			bool window_size_changed_ = false;
+			int32_t width_ = 0;
+			int32_t height_ = 0;
+
 			bool checkResolutionFutureReady() const
 			{
                 if (resolution_future_.valid())
@@ -97,6 +102,9 @@ namespace vn
 					click = 0;
 					break;
 				case 3:
+					window_size_changed_ = true;
+					width_ = 1920 / 3;
+					height_ = 1080 / 3;
 				default:
 					break;
 				}
@@ -113,6 +121,16 @@ namespace vn
 						});
 					log_window_for_resolution_->startRender();
 				}
+			}
+			SDL_Rect getWindowChangedRect()
+			{
+				if (!window_size_changed_)
+				{
+					window_size_changed_ = false;
+					return { 0, 0, 0, 0 };
+				}
+				window_size_changed_ = false;
+				return { 0, 0, width_, height_ };
 			}
 			void renderSDLPart() const
 			{
@@ -134,6 +152,10 @@ namespace vn
 				choose_file_->renderAndResponse();
 				choose_vnap_->renderAndResponse();
 				log_window_for_resolution_->renderAndResponse();
+			}
+			void whenChangedWindowSize(const std::shared_ptr<core::coordinatesystem::RatioCoordinateSystem<uint32_t>>& rcs) const
+			{
+				main_menu_->whenChangedWindowSize(rcs);
 			}
 		};
 	}
