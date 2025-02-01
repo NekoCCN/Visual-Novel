@@ -2,7 +2,6 @@
 #pragma execution_character_set("utf-8")
 #ifndef VISUALNOVEL_APPLICATION_H
 #define VISUALNOVEL_APPLICATION_H
-#include "Initialization.h"
 #include <SDL3/SDL.h>
 #include "EntryMenu/EntryMenu.h"
 #include <Core/Window/Window.h>
@@ -20,6 +19,7 @@
 #include <Resolution/EntryPoint.h>
 #include <memory>
 #include <string>
+#include "Initialization.h"
 
 namespace vn
 {

@@ -8,6 +8,9 @@
 #include <Core/Exception/Exception.h>
 #include <Core/LogSystem/LogFunction.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#ifdef IS_WIN32_SYS
+#include <windows.h>
+#endif
 
 namespace vn
 {
@@ -55,6 +58,11 @@ namespace vn
 
 				init_SDL();
 				init_SDL_TTF();
+
+#ifdef IS_WIN32_SYS
+				SetConsoleOutputCP(CP_UTF8);
+				setvbuf(stdout, nullptr, _IOFBF, 1000);
+#endif
 			}
 		public:
 			ProjectInitializer()

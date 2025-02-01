@@ -8,6 +8,10 @@ endif()
 
 project ("Visual-Novel")
 
+if (CMAKE_HOST_WIN32)
+  add_compile_definitions( IS_WIN32_SYS )
+endif()
+
 # Visual Text SRC
 include_directories( ./ )
 add_subdirectory ("Core")
