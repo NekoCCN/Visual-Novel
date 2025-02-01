@@ -132,8 +132,8 @@ bool vn::asset::AssetPackWStream::chunkWriteByPath(const std::string& path, uint
     }
 
     toc_.push_back(toc_[toc_.size() - 1] + size);
-    return_index = toc_.size() - 1;
-    path_index_table_.insert(std::make_pair(path, toc_.size() - 1));
+    return_index = toc_.size() - 2;
+    path_index_table_.insert(std::make_pair(path, toc_.size() - 2));
 
     if (buffer)
     {
@@ -266,9 +266,9 @@ bool vn::asset::AssetPackWStream::chunkWriteByStorage(const std::string& path, u
     }
 
     toc_.push_back(toc_[toc_.size() - 1] + size);
-    return_index = toc_.size() - 1;
+    return_index = toc_.size() - 2;
 
-    path_index_table_.insert(std::make_pair(path, toc_.size() - 1));
+    path_index_table_.insert(std::make_pair(path, toc_.size() - 2));
 
     if (buffer)
     {

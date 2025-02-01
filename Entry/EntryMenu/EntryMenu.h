@@ -7,6 +7,7 @@
 #include <Render/FileWeiget/ChooseVnap.h>
 #include <Render/LogWindow/LogWindow.h>
 #include <Resolution/EntryPoint.h>
+#include <Asset/AssetPackRStream/AssetPackRStream.h>
 #include <future>
 #include <chrono>
 #include <thread>
@@ -120,6 +121,13 @@ namespace vn
 							return (*resolution_entry_)(*log_window_for_resolution_);
 						});
 					log_window_for_resolution_->startRender();
+				}
+
+				if (choose_vnap_->isSuccess())
+				{
+					asset::AssetPackRStream arst(choose_vnap_->getFilePath());
+					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s", arst.getString(2).c_str());
+					SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s", arst.getString(4).c_str());
 				}
 			}
 			SDL_Rect getWindowChangedRect()

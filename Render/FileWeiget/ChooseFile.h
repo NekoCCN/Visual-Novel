@@ -49,7 +49,7 @@ namespace vn
 				}
 
 				ImGuiIO& io = ImGui::GetIO();
-				ImGui::SetNextWindowSize(ImVec2(0.0f, io.DisplaySize.y * 0.35));
+				ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x * 0.65, io.DisplaySize.y * 0.4));
 				ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 				ImGui::Begin("Choose a (.md) File and Path to Create File", &render_status_, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking);
 

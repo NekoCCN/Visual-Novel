@@ -88,7 +88,7 @@ namespace vn
                     throw chunk_error();
 				}
 				toc_.push_back(toc_[toc_.size() - 1] + str.size() + 1);
-				return toc_.size() - 1;
+				return toc_.size() - 2;
 			}
 
 			bool haveStorage_;
@@ -98,7 +98,6 @@ namespace vn
 		public:
 			AssetPackWStream(const std::string& dst_path, SDL_Storage* storage = nullptr) : storage_(storage)	
 			{
-				toc_.push_back(0);
 
 				if (storage_ == nullptr)
 				{
@@ -135,7 +134,7 @@ namespace vn
 						SDL_LogError(SDL_LOG_CATEGORY_ERROR, "AssetPackWStream: Failed to open file %s", dst_path.c_str());
 						throw core::exception::file_not_found_error();
 					}
-					if (SDL_TellIO(wstream_) != 0)
+					if (SDL_GetIOSize(wstream_) != 0)
 					{
 						SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "File name exist : %s", dst_path.c_str());
 						SDL_CloseIO(wstream_);
@@ -152,6 +151,8 @@ namespace vn
                 SDL_WriteIO(wstream_, &toc_size, sizeof(uint64_t));
 				SDL_WriteIO(wstream_, &character_name_size, sizeof(uint64_t));
 				SDL_WriteIO(wstream_, &program_index_size, sizeof(uint64_t));
+
+				toc_.push_back(SDL_TellIO(wstream_));
 			}
 
 			AssetPackWStream& operator<<(const ProgramIndex& program_index);
@@ -190,12 +191,12 @@ namespace vn
 
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPackWStream: End file");
 
+				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_END);
+				uint64_t tmp = SDL_TellIO(wstream_);
+
 				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_SET);
 
-				uint64_t tmp;
-
-				WriteIO(wstream_, &label_, label_.size() + 1);
-                tmp = SDL_TellIO(wstream_);
+				WriteIO(wstream_, label_.data(), label_.size() + 1);
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
 				tmp = toc_.size();
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
