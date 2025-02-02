@@ -8,8 +8,6 @@
 #include <map>
 #include <cstdint>
 #include <vector>
-#include <regex>
-#include <string>
 #include <Render/LogWindow/LogWindow.h>
 #include "../FormatChecker/FormatChecker.h"
 

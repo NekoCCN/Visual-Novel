@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <Core/Exception/Exception.h>
 #include <Core/CommandList/CommandList.h>
+#include "../ExtraArea/ExtraArea.h"
 #include <vector>
 #include <string>
 
@@ -46,12 +47,15 @@ namespace vn
 
         private:
             SDL_IOStream* rstream_;
-            std::string label_ = "VN_PACK";
+
+            inline static constexpr double version_ = 1.2;
+            inline static const std::string label_ = "VN_PACK";
 
             uint64_t resources_offset_;
             uint64_t toc_size_;
             uint64_t character_name_size_;
             uint64_t program_index_size_;
+            uint64_t extra_buffer_byte_size_;
 
             std::vector<uint64_t> toc_;
             std::vector<std::string> character_name_list_;
@@ -64,9 +68,10 @@ namespace vn
             bool readTOC();
             bool readCharacterNames();
             bool readProgramIndex();
+            bool readExtraArea(std::shared_ptr<const ExtraArea> extra_area = nullptr) const;
 
-            std::string readString(uint64_t index);
-            bool readChunk(uint64_t index, char* buffer, uint64_t size);
+            std::string readString(uint64_t index) const;
+            bool readChunk(uint64_t index, char* buffer, uint64_t size) const;
 
         public:
             AssetPackRStream(const std::string& src_path)
@@ -90,7 +95,7 @@ namespace vn
                 SDL_CloseIO(rstream_);
             }
 
-            bool getAsset(uint64_t index, std::vector<char>& buffer);
+            bool getAsset(uint64_t index, std::vector<char>& buffer) const;
 
             std::string getCharacterName(uint64_t index) const;
 
@@ -106,9 +111,14 @@ namespace vn
                 return program_index_size_;
             }
 
-            std::string getString(uint64_t index)
+            std::string getString(uint64_t index) const
             {
                 return readString(index);
+            }
+
+            static double getVersion()
+            {
+                return version_;
             }
         };
     }

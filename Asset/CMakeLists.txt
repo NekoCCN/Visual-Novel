@@ -10,7 +10,7 @@ set(Asset_SRC
   "ConfigBinaryPack/ConfigBinaryPack.h"
   "AssetPackRstream/AssetPackRStream.h"
   "AssetPackRstream/AssetPackRStream.cc"
-)
+  "ExtraArea/ExtraArea.h")
 
 add_library(VisualNovelAsset STATIC ${Asset_SRC})
 
@@ -23,5 +23,5 @@ set(Asset_Require
 target_link_libraries(VisualNovelAsset PUBLIC ${Asset_Require})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET VisualNovelCore PROPERTY CXX_STANDARD 20)
+  set_property(TARGET VisualNovelAsset PROPERTY CXX_STANDARD 20)
 endif()

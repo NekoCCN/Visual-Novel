@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <Core/Exception/Exception.h>
 #include <Core/CommandList/CommandList.h>
+#include "../ExtraArea/ExtraArea.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -72,7 +73,8 @@ namespace vn
 
 			std::vector<ProgramIndexInner> program_index_inner_list_;
 
-			std::string label_ = "VN_PACK";
+			inline static constexpr double version_ = 1.2;
+			inline static const std::string label_ = "VN_PACK";
 
 			static constexpr uint64_t MAX_BUFFER_SIZE = 1024ll * 1024ll * 10ll;     // 10MB
 			static constexpr uint64_t ERROR_BUFFER_SIZE = 1024ll * 1024ll;          // 1MB fallback buffer
@@ -142,38 +144,27 @@ namespace vn
 					}
 				}
 
+				SDL_WriteIO(wstream_, label_.c_str(), label_.size() + 1);
+				SDL_WriteIO(wstream_, &version_, sizeof(double));
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPack(W): Version %.3lf", version_);
+
 				constexpr uint64_t resources_offset = 0;
 				constexpr uint64_t toc_size = 0;
 				constexpr uint64_t character_name_size = 0;
 				constexpr uint64_t program_index_size = 0;
-				SDL_WriteIO(wstream_, label_.c_str(), label_.size() + 1);
+				constexpr uint64_t extra_buffer_byte_size = 0;
 				SDL_WriteIO(wstream_, &resources_offset, sizeof(uint64_t));
                 SDL_WriteIO(wstream_, &toc_size, sizeof(uint64_t));
 				SDL_WriteIO(wstream_, &character_name_size, sizeof(uint64_t));
 				SDL_WriteIO(wstream_, &program_index_size, sizeof(uint64_t));
+				SDL_WriteIO(wstream_, &extra_buffer_byte_size, sizeof(uint64_t));
 
 				toc_.push_back(SDL_TellIO(wstream_));
 			}
 
 			AssetPackWStream& operator<<(const ProgramIndex& program_index);
-			/*
-				std::vector<uint64_t> character_name_index_list;
 
-				std::vector<uint32_t> animate_speed;
-				std::vector<std::vector<uint64_t>> character_asset_index_list;
-
-				uint64_t background_image_index;
-				uint64_t background_sound_index;
-
-				uint64_t string_index;
-
-				std::vector<uint64_t> other_sound_index;
-
-				std::vector<core::command::CommandListEnum> command;
-				std::vector<std::string> command_arguments;
-				std::vector<uint64_t> command_asset_index;
-			*/
-			void endFile()
+			void endFile(const std::shared_ptr<ExtraArea>& extra_area = nullptr)
 			{
 				if (is_done_ == true)
 				{
@@ -197,6 +188,8 @@ namespace vn
 				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_SET);
 
 				WriteIO(wstream_, label_.data(), label_.size() + 1);
+				SDL_WriteIO(wstream_, &version_, sizeof(double));
+
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
 				tmp = toc_.size();
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
@@ -204,6 +197,15 @@ namespace vn
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
 				tmp = program_index_inner_list_.size();
                 SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+
+				std::vector<char> extra_buffer;
+				if (extra_area != nullptr)
+				{
+					extra_buffer = extra_area->tranformToData();
+
+					tmp = extra_buffer.size();
+					SDL_WriteIO(wstream_, &tmp, sizeof(uint64_t));
+				}
 
 				SDL_SeekIO(wstream_, 0, SDL_IO_SEEK_END);
 
@@ -278,6 +280,11 @@ namespace vn
 							WriteIO(wstream_, &y, sizeof(uint64_t));
 						}
 					}
+
+					if (extra_area != nullptr)
+					{
+                        WriteIO(wstream_, extra_buffer.data(), extra_buffer.size());
+					}
 				}
 				catch (const chunk_error& e)
 				{
@@ -288,6 +295,11 @@ namespace vn
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPackWStream: End file done");
 
 				is_done_ = true;
+			}
+
+			static double getVersion()
+			{
+				return version_;
 			}
 
 			~AssetPackWStream()

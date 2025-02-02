@@ -12,10 +12,34 @@ bool vn::asset::AssetPackRStream::readHeader()
         return false;
     }
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPack(S): Version %.3lf", version_);
+    
+    double version;
+    if (SDL_ReadIO(rstream_, &version, sizeof(double)) != sizeof(double))
+    {
+        return false;
+    }
+
+    if (label_buf.data() != label_)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "AssetPack(S): Not a vnap format file", version_);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "VERSION ERROR",
+            "Vnap file is inconsistent with the program version", nullptr);
+        return false;
+    }
+    if (version != version_)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "AssetPack(S): vnap file is inconsistent with the program version", version_);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "VERSION ERROR", 
+            "Vnap file is inconsistent with the program version", nullptr);
+        return false;
+    }
+
     if (SDL_ReadIO(rstream_, &resources_offset_, sizeof(uint64_t)) != sizeof(uint64_t) ||
         SDL_ReadIO(rstream_, &toc_size_, sizeof(uint64_t)) != sizeof(uint64_t) ||
         SDL_ReadIO(rstream_, &character_name_size_, sizeof(uint64_t)) != sizeof(uint64_t) ||
-        SDL_ReadIO(rstream_, &program_index_size_, sizeof(uint64_t)) != sizeof(uint64_t))
+        SDL_ReadIO(rstream_, &program_index_size_, sizeof(uint64_t)) != sizeof(uint64_t) ||
+        SDL_ReadIO(rstream_, &extra_buffer_byte_size_, sizeof(uint64_t)) != sizeof(uint64_t))
     {
         return false;
     }
@@ -185,7 +209,42 @@ bool vn::asset::AssetPackRStream::readProgramIndex()
     return true;
 }
 
-std::string vn::asset::AssetPackRStream::readString(uint64_t index)
+bool vn::asset::AssetPackRStream::readExtraArea(std::shared_ptr<const ExtraArea> extra_area) const
+{
+    if (extra_area != nullptr)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Extra area pointer already exist address.");
+        return false;
+    }
+    if (extra_buffer_byte_size_ == 0)
+    {
+        return true;
+    }
+
+    std::vector<char> buffer(extra_buffer_byte_size_);
+
+    if (SDL_ReadIO(rstream_, buffer.data(), extra_buffer_byte_size_) != extra_buffer_byte_size_)
+    {
+        return false;
+    }
+
+    try
+    {
+        extra_area = ExtraArea::loadFromData(buffer);
+    }
+    catch (const std::exception& e)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Failed to load extra area: %s", e.what());
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "EXTRA AREA ERROR",
+            "Failed to load extra area: %s", nullptr);
+        return false;
+    }
+
+    return true;
+}
+
+
+std::string vn::asset::AssetPackRStream::readString(uint64_t index) const
 {
     if (index >= toc_.size())
     {
@@ -203,7 +262,7 @@ std::string vn::asset::AssetPackRStream::readString(uint64_t index)
     return buffer;
 }
 
-bool vn::asset::AssetPackRStream::readChunk(uint64_t index, char* buffer, uint64_t size)
+bool vn::asset::AssetPackRStream::readChunk(uint64_t index, char* buffer, uint64_t size) const
 {
     if (index >= toc_.size())
     {
@@ -223,7 +282,7 @@ bool vn::asset::AssetPackRStream::readChunk(uint64_t index, char* buffer, uint64
     return true;
 }
 
-bool vn::asset::AssetPackRStream::getAsset(uint64_t index, std::vector<char>& buffer)
+bool vn::asset::AssetPackRStream::getAsset(uint64_t index, std::vector<char>& buffer) const
 {
     if (index >= toc_.size())
     {

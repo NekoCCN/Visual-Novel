@@ -5,7 +5,7 @@ set(Render_SRC
   "BasicRender/BasicRender.h"
   "FileWeiget/ImGuiFileDialog/ImGuiFileDialog.cpp"
   "FileWeiget/ChooseFile.h"
-  "FileWeiget/ChooseVnap.h" "LogWindow/LogWindow.h")
+  "FileWeiget/ChooseVnap.h" "LogWindow/LogWindow.h" "BasicTexture/BasicTexture.h")
 
 add_library(VisualNovelRender STATIC ${Render_SRC})
 
