@@ -16,6 +16,20 @@ namespace vn
         class AssetPackRStream
         {
         public:
+            struct ProgramConfigInner
+            {
+                char name[50];
+
+                int32_t width;
+                int32_t height;
+
+                int32_t fps;
+                int32_t is_vsync;
+
+                uint64_t font_index;
+                uint64_t dialog_box_index;
+            };
+
             struct ProgramIndexInner
             {
                 std::vector<uint64_t> character_name_index_list;
@@ -95,7 +109,13 @@ namespace vn
                 SDL_CloseIO(rstream_);
             }
 
-            bool getAsset(uint64_t index, std::vector<char>& buffer) const;
+            bool getAssetBuffer(uint64_t index, std::vector<char>& buffer) const;
+            bool getAssetPointer(uint64_t index, std::shared_ptr<char>& pointer) const;
+
+            uint64_t getAssetSize(uint64_t index) const
+            {
+                return toc_[index + 1] - toc_[index];
+            }
 
             std::string getCharacterName(uint64_t index) const;
 

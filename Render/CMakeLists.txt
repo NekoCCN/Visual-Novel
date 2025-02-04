@@ -5,13 +5,19 @@ set(Render_SRC
   "BasicRender/BasicRender.h"
   "FileWeiget/ImGuiFileDialog/ImGuiFileDialog.cpp"
   "FileWeiget/ChooseFile.h"
-  "FileWeiget/ChooseVnap.h" "LogWindow/LogWindow.h" "BasicTexture/BasicTexture.h")
+  "FileWeiget/ChooseVnap.h"
+  "LogWindow/LogWindow.h"
+  "BasicTexture/BasicTexture.h"
+  "FontCore/FontCore.h"
+  "FontCore/FontCore.cc"
+)
 
 add_library(VisualNovelRender STATIC ${Render_SRC})
 
 set(Render_Require
   SDL3-static
   SDL3_image::SDL3_image
+  SDL3_ttf::SDL3_ttf
   imgui
   VisualNovelCore
 )

@@ -104,6 +104,11 @@ namespace vn
 			public:
 				virtual const char* what() { return "[FATAL][Asset] File index error!"; }
 			};
+			class asset_pack_data_error : public std::exception
+			{
+			public:
+				virtual const char* what() { return "[FATAL][Asset] AssetPack data error!"; }
+			};
 		}
 	}
 }

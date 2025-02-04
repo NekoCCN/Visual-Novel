@@ -8,7 +8,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <utility>
 
 namespace vn
 {
@@ -52,7 +51,7 @@ namespace vn
 					return toc_[index + 1] - toc_[index];
 				}
 				// Can use the enum class ThemeAssetList
-				std::shared_ptr<char> operator[](uint64_t index)
+				std::shared_ptr<char> operator[](uint64_t index) const
 				{
 					if (index >= toc_size_ || index < 0)
 					{

@@ -17,6 +17,34 @@ namespace vn
 		class AssetPackWStream
         {
 		public:
+			struct ProgramConfig
+			{
+				char name[50];
+				double version;
+
+				int32_t width;
+                int32_t height;
+
+                int32_t fps;
+				int32_t is_vsync;
+
+				std::string font_path;
+				std::string dialog_box_path;
+			};
+			struct ProgramConfigInner
+			{
+				char name[50];
+				double version;
+
+				int32_t width;
+				int32_t height;
+
+				int32_t fps;
+				int32_t is_vsync;
+
+				uint64_t font_index;
+				uint64_t dialog_box_index;
+			};
 			struct ProgramIndex
 			{
 				std::vector<std::string> character_name_list;
@@ -63,7 +91,7 @@ namespace vn
 		private:
 
 			SDL_IOStream* wstream_;
-			
+
 			std::map<std::string, uint64_t> path_index_table_;
 
 			std::vector<uint64_t> toc_;
@@ -147,6 +175,8 @@ namespace vn
 				SDL_WriteIO(wstream_, label_.c_str(), label_.size() + 1);
 				SDL_WriteIO(wstream_, &version_, sizeof(double));
 				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "AssetPack(W): Version %.3lf", version_);
+
+				
 
 				constexpr uint64_t resources_offset = 0;
 				constexpr uint64_t toc_size = 0;

@@ -282,7 +282,7 @@ bool vn::asset::AssetPackRStream::readChunk(uint64_t index, char* buffer, uint64
     return true;
 }
 
-bool vn::asset::AssetPackRStream::getAsset(uint64_t index, std::vector<char>& buffer) const
+bool vn::asset::AssetPackRStream::getAssetBuffer(uint64_t index, std::vector<char>& buffer) const
 {
     if (index >= toc_.size())
     {
@@ -293,6 +293,19 @@ bool vn::asset::AssetPackRStream::getAsset(uint64_t index, std::vector<char>& bu
     buffer.resize(size);
 
     return readChunk(index, buffer.data(), size);
+}
+
+bool vn::asset::AssetPackRStream::getAssetPointer(uint64_t index, std::shared_ptr<char>& pointer) const
+{
+    if (index >= toc_.size())
+    {
+        return false;
+    }
+
+    uint64_t size = toc_[index + 1] - toc_[index];
+    pointer = std::shared_ptr<char>(new char[size], std::default_delete<char[]>());
+
+    return readChunk(index, pointer.get(), size);
 }
 
 std::string vn::asset::AssetPackRStream::getCharacterName(uint64_t index) const

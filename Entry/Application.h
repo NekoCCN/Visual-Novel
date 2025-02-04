@@ -14,6 +14,7 @@
 #include <Render/MainMenu/MainMenu.h>
 #include <Render/FileWeiget/ChooseFile.h>
 #include <Render/FileWeiget/ChooseVnap.h>
+#include <Render/FontCore/FontCore.h>
 #include <Render/LogWindow/LogWindow.h>
 #include <Resolution/DefinedPart/DefinePart.h>
 #include <Resolution/EntryPoint.h>
@@ -99,6 +100,14 @@ namespace vn
 						{
                             changeWindowSize(rect.w, rect.h);
 						}
+
+						if (e.type == SDL_EVENT_KEY_DOWN)
+						{
+							if (e.key.key == SDLK_BACKSPACE)
+							{
+								SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Backspace");
+							}
+						}
 					}
 
 					window_->setRenderDrawColorInt(255, 255, 255, 255);
@@ -115,6 +124,7 @@ namespace vn
 					ImGui::Render();
 
 					ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), window_->getRendererHinding());
+
 					window_->presentRender();
 				}
 				return status;

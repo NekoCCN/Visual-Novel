@@ -20,16 +20,16 @@ namespace vn
             std::map<std::string, int64_t> string_define_index_to_value_;
 
             inline static constexpr double version_ = 1.0;
-
+        public:
             ExtraArea(const std::vector<char>& data)
             {
 
             }
             ExtraArea() = default;
-        public:
+
             std::vector<char> tranformToData() const
             {
-
+                return {};
             }
             static std::shared_ptr<const ExtraArea> loadFromData(const std::vector<char>& data)
             {
