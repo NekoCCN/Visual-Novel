@@ -21,7 +21,7 @@ namespace vn
 		private:
 			static void init_exception_hinding()
 			{
-				set_terminate(core::exception::exception_hinding);
+				std::set_terminate(core::exception::exception_hinding);
 			}
 
 			static void init_SDL()

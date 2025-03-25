@@ -8,8 +8,8 @@ set(Asset_SRC
   "AssetPackWStream/AssetPackWStream.h"
   "AssetPackWStream/AssetPackWStream.cc"
   "ConfigBinaryPack/ConfigBinaryPack.h"
-  "AssetPackRstream/AssetPackRStream.h"
-  "AssetPackRstream/AssetPackRStream.cc"
+  "AssetPackRStream/AssetPackRStream.h"
+  "AssetPackRStream/AssetPackRStream.cc"
   "ExtraArea/ExtraArea.h")
 
 add_library(VisualNovelAsset STATIC ${Asset_SRC})

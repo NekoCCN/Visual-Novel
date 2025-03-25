@@ -1,6 +1,8 @@
 #pragma execution_character_set("utf-8")
 #include "Transform.h"
 
+#include <cmath>
+
 using namespace vn;
 
 // Reference : https://github.com/pygame-community/pygame-ce

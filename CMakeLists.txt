@@ -13,7 +13,7 @@ if (CMAKE_HOST_WIN32)
 endif()
 
 # Visual Text SRC
-include_directories( ./ )
+include_directories( "./" )
 add_subdirectory ("Core")
 add_subdirectory ("Asset")
 add_subdirectory ("Render")
